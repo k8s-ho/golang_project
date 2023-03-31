@@ -78,32 +78,36 @@ func get_match_data(match_id string, access_id string) {
 
 	// match data 가져옴
 	match_cnt := len(match_arr) // 최근 경기수 최대 100건
-
 	fmt.Printf("[ '%v'님의 최근 공식 경기 수: %v]\n", user_nickname, match_cnt)
-	match_data := get_request(api_url + match_arr[0])
-	// fmt.Println(match_data)
-	match_date := gojsonq.New().FromString(match_data).Find("matchDate")
-	fmt.Printf("[게임시간] %v\n", match_date)
 
-	// 게임데이터 출력 추후 함수화
-	if gojsonq.New().FromString(match_data).Find("matchInfo.[0].accessId") == access_id {
-		my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
-		my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
-		match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[0].matchDetail.matchResult")
-		enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
-		enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
-		fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
-		fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+	for n := 0; n < match_cnt; n++{
+		match_data := get_request(api_url + match_arr[n])
+		// fmt.Println(match_data)
+		match_date := gojsonq.New().FromString(match_data).Find("matchDate")
+		fmt.Printf("[게임시간] %v\n", match_date)
 
-	} else {
-		my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
-		my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
-		match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[1].matchDetail.matchResult")
-		enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
-		enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
-		fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
-		fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+		// 게임데이터 출력 추후 함수화
+		if gojsonq.New().FromString(match_data).Find("matchInfo.[0].accessId") == access_id {
+			my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
+			my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
+			match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[0].matchDetail.matchResult")
+			enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
+			enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
+			fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
+			fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+
+		} else {
+			my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
+			my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
+			match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[1].matchDetail.matchResult")
+			enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
+			enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
+			fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
+			fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+		}
+		fmt.Println()
 	}
+
 }
 
 func get_match_id(id string) {
