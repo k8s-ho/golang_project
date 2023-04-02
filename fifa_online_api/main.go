@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/thedevsaddam/gojsonq"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"net/url"
+	"github.com/thedevsaddam/gojsonq"
 )
 
 type INFO struct {
@@ -64,7 +65,8 @@ func get_request(url string) string { // string user id return
 
 // nickname을 통해 user access id 가져오는 함수 
 func get_user_info(nickname string) string {
-	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/?nickname=" + nickname //nickname을 통한 user 정보 api
+	encodedNickname := url.QueryEscape(nickname) // 한글 인코딩 진행
+	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/?nickname=" + encodedNickname //nickname을 통한 user 정보 api
 	user_info := get_request(api_url)                                                 //user_info 리턴받아서 바로 데이터받아오기
 
 	access_id := gojsonq.New().FromString(user_info).Find("accessId")
