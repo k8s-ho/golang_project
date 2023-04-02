@@ -144,7 +144,7 @@ func get_match_id(id string) {
 
 func main() {
 	fmt.Println("[     피파온라인4 경기이력 검색기     ]")
-	fmt.Println("Data based on NEXON DEVELOPERS")
+	fmt.Println("[Data based on NEXON DEVELOPERS]")
 	fmt.Print("[+] 닉네임을 입력하세요 = ")
 	fmt.Scan(&user_nickname)
 	access_id := get_user_info(user_nickname)
