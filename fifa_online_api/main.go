@@ -9,14 +9,22 @@ import (
 	"strings"
 )
 
-var user_nickname string
-
 type INFO struct {
 	accessId string
 	nickname string
 	level    int
 }
 
+// 원하는 경기 데이터가 있다면 여기에 추가 
+const(
+	cns_nick = "nickname"
+	cns_goal = "shoot.goalTotal"
+	cns_result = "matchDetail.matchResult"
+)
+
+var user_nickname string
+
+// access token file open하여 사용하는 함수
 func get_token() string {
 	file, err := ioutil.ReadFile("token")
 	if err != nil {
@@ -29,6 +37,7 @@ func get_token() string {
 	return token
 }
 
+// api request 및 response 받는 함수 
 func get_request(url string) string { // string user id return
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -53,6 +62,7 @@ func get_request(url string) string { // string user id return
 	return result
 }
 
+// nickname을 통해 user access id 가져오는 함수 
 func get_user_info(nickname string) string {
 	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/?nickname=" + nickname //nickname을 통한 user 정보 api
 	user_info := get_request(api_url)                                                 //user_info 리턴받아서 바로 데이터받아오기
@@ -62,6 +72,32 @@ func get_user_info(nickname string) string {
 		panic("[-] No such nickname exists. check your nickname :(")
 	}
 	return access_id.(string)
+}
+
+// match data 출력 함수 
+func show_data(myidx int, runman interface{}, match_data string){
+	var my_nickname, enemy_nickname, match_result, my_goal, enemy_goal interface{}
+	my_nickname = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx, cns_nick))	
+	my_goal = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx, cns_goal))
+	match_result = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx, cns_result))
+
+	if myidx == 0 {
+		if runman == nil{
+			fmt.Println("[!] 상대방이 탈주하였습니다") // 탈주자 유무 확인
+			enemy_nickname = "탈주자"
+			enemy_goal = 0
+		}else {
+			enemy_nickname = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx+1, cns_nick))
+			enemy_goal = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx+1, cns_goal))
+		}	
+	}else if myidx == 1 {
+		enemy_nickname = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx-1, cns_nick))
+		enemy_goal = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx-1, cns_goal))
+	}
+
+	fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
+	fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+	fmt.Println()
 }
 
 // match data를 찾아오는 함수
@@ -80,39 +116,28 @@ func get_match_data(match_id string, access_id string) {
 	match_cnt := len(match_arr) // 최근 경기수 최대 100건
 	fmt.Printf("[ '%v'님의 최근 공식 경기 수: %v]\n", user_nickname, match_cnt)
 
+	// 최근 경기 데이터 전부 가져옴
 	for n := 0; n < match_cnt; n++{
 		match_data := get_request(api_url + match_arr[n])
-		// fmt.Println(match_data)
 		match_date := gojsonq.New().FromString(match_data).Find("matchDate")
 		fmt.Printf("[게임시간] %v\n", match_date)
 
-		// 게임데이터 출력 추후 함수화
+		// 탈주자 여부 확인(matchInfo가 1개이면 탈주자 존재한다는 의미)
+		chk := gojsonq.New().FromString(match_data).Find("matchInfo.[1].accessId")// 두번째 배열 존재 여부 확인으로 탈주자 검사 
+		
+		// 나의 matchinfo idx 확인 
 		if gojsonq.New().FromString(match_data).Find("matchInfo.[0].accessId") == access_id {
-			my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
-			my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
-			match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[0].matchDetail.matchResult")
-			enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
-			enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
-			fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
-			fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
-
-		} else {
-			my_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[1].nickname")
-			my_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[1].shoot.goalTotal")
-			match_result := gojsonq.New().FromString(match_data).Find("matchInfo.[1].matchDetail.matchResult")
-			enemy_nickname := gojsonq.New().FromString(match_data).Find("matchInfo.[0].nickname")
-			enemy_goal := gojsonq.New().FromString(match_data).Find("matchInfo.[0].shoot.goalTotal")
-			fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
-			fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+			show_data(0,chk, match_data) // 나의 idx가 0번 일경우를 기준으로 match data 출력 
+		}else {
+			show_data(1,chk, match_data) // 나의 idx가 1번 일경우를 기준으로 match data 출력  
 		}
-		fmt.Println()
 	}
 
 }
 
 func get_match_id(id string) {
 	// 리그 친선: 30  클래식: 40  공식: 50  감독: 52  공식친선: 60
-	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/" + id + "/matches?matchtype=50" // get match id
+	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/" + id + "/matches?matchtype=52" // get match id
 	match_id := get_request(api_url)
 	get_match_data(match_id, id)
 }
