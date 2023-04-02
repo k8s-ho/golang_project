@@ -1,4 +1,4 @@
-module github.com/k8s-ho/golang_project/new/main/fifa_online_api/main
+module fifa_online_api
 
 go 1.20
 
