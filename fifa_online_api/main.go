@@ -137,7 +137,7 @@ func get_match_data(match_id string, access_id string) {
 
 func get_match_id(id string) {
 	// 리그 친선: 30  클래식: 40  공식: 50  감독: 52  공식친선: 60
-	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/" + id + "/matches?matchtype=52" // get match id
+	api_url := "https://api.nexon.co.kr/fifaonline4/v1.0/users/" + id + "/matches?matchtype=40" // get match id
 	match_id := get_request(api_url)
 	get_match_data(match_id, id)
 }
