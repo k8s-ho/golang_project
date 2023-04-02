@@ -96,9 +96,16 @@ func show_data(myidx int, runman interface{}, match_data string){
 		enemy_nickname = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx-1, cns_nick))
 		enemy_goal = gojsonq.New().FromString(match_data).Find(fmt.Sprintf("matchInfo.[%d].%s", myidx-1, cns_goal))
 	}
-
+	
+	// 경기정보
 	fmt.Printf("[경기] %v(나) vs %v(상대)\n", my_nickname, enemy_nickname)
-	fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+	
+	// 승부차기 승패 유무 확인
+	if (my_goal == enemy_goal) && match_result != "무" {
+		fmt.Printf("[경기결과: 승부차기 '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+	}else{
+		fmt.Printf("[경기결과: '%v'] %v:%v\n", match_result, my_goal, enemy_goal)
+	}
 	fmt.Println()
 }
 
