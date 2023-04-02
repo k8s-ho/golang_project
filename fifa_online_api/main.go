@@ -115,7 +115,7 @@ func get_match_data(match_id string, access_id string) {
 	// match data 가져옴
 	match_cnt := len(match_arr) // 최근 경기수 최대 100건
 	fmt.Printf("[ '%v'님의 최근 공식 경기 수: %v]\n", user_nickname, match_cnt)
-
+	fmt.Println("-------------------------------------------")
 	// 최근 경기 데이터 전부 가져옴
 	for n := 0; n < match_cnt; n++{
 		match_data := get_request(api_url + match_arr[n])
