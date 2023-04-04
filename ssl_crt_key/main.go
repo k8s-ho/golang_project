@@ -29,12 +29,15 @@ func main() {
 		log.Println(err)
 	}
 
+	dns_str := []string{"k8s-ho.com"} // tmp
+
 	template := x509.Certificate{
 		SerialNumber: big.NewInt(time.Now().Unix()),
 		Subject:      pkix.Name{CommonName: common},
 		NotBefore:    time.Now(),
 		NotAfter:     time.Now().AddDate(date, 0, 0),
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		DNSNames:     dns_str,
 	}
 
 	data, err := x509.CreateCertificate(rand.Reader, &template, &template, &privatekey.PublicKey, privatekey)
