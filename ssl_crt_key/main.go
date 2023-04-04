@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// 인증서 파일로 생성
-	certfile, err := os.OpenFile(certfile_name+".pem", os.O_WRONLY, 0644) // flag: 쓰기전용, 644 권한부여
+	certfile, err := os.OpenFile(certfile_name+".pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644) // flag: 쓰기전용, 644 권한부여
 	if err != nil {
 		panic(err)
 	}
