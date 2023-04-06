@@ -15,6 +15,12 @@ curl https://localhost:7777 --cacert ca.crt
   
 <br>
 
+### Dev information
+```bash
+go 1.20.2 darwin/arm64
+```
+<br>
+
 ### Reference
 ```bash
 https://pkg.go.dev/crypto/x509
