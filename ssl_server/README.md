@@ -3,7 +3,7 @@ After generating the CA private key, it is a program that creates a CA certifica
 generates a server certificate signed using the CA private key.
 
 ---
-* Usage
+### Usage
 ```bash
 * Server Side: excute server
 go build
@@ -15,7 +15,7 @@ curl https://localhost:7777 --cacert ca.crt
   
 <br>
 
-* Reference
+### Reference
 ```bash
 https://pkg.go.dev/crypto/x509
 ```
