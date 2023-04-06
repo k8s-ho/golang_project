@@ -22,8 +22,8 @@ func main() {
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
 		IsCA:                  true,
-		//DNSNames:     []string{"k8s-ho.com"}, //tmp
-	}
+		// DNSNames:              []string{"k8s-ho.com"}, //tmp
+	} 
 	generateCrt(caKey, caKey, "ca", ca_template, ca_template)
 
 	serverKey := generateKey("server")
