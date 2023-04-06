@@ -22,21 +22,21 @@ func main() {
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
 		IsCA:                  true,
-		//DNSNames:     []string{"k8s-ho.com"},
+		//DNSNames:     []string{"k8s-ho.com"}, //tmp
 	}
 	generateCrt(caKey, caKey, "ca", ca_template, ca_template)
 
 	serverKey := generateKey("server")
 	server_template := x509.Certificate{
 		SerialNumber:          big.NewInt(time.Now().Unix()),
-		Subject:               pkix.Name{CommonName: serverCN, Organization: orgs}, // webhook-server
+		Subject:               pkix.Name{CommonName: serverCN, Organization: orgs}, 
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(1, 0, 0),
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
 		IsCA:                  false,
-		// DNSNames:              []string{"kubernetes.default.svc"}, // need modify
+		// DNSNames:              []string{"aaa.bbb.com"}, //tmp
 	}
 	generateCrt(caKey, serverKey, "server", server_template, ca_template)
 	server()
