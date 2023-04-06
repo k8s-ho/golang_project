@@ -20,4 +20,4 @@ curl https://localhost:7777 --cacert ca.crt
 https://pkg.go.dev/crypto/x509
 ```
 ---
-<img width="779" alt="스크린샷 2023-04-06 오후 1 46 48" src="https://user-images.githubusercontent.com/118821939/230274394-26b73889-8d57-47c2-9664-3fe22a5acb1e.png">
+<img width="855" alt="스크린샷 2023-04-06 오후 1 54 11" src="https://user-images.githubusercontent.com/118821939/230275287-bced8e01-abaa-4ef1-a0da-5d2c8138feb9.png">
